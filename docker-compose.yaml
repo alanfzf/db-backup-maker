@@ -1,12 +1,16 @@
 services:
   maria-backup-maker:
-    build:
-      context: .
+    image: db-backup-maker:latest
     restart: unless-stopped
     env_file:
       - .env
     volumes:
-      - ./config/crontab:/etc/crontabs/root:ro
+      - type: bind
+        source: ./config/crontab
+        target: /etc/crontab
+        read_only: true
+        bind:
+           create_host_path: false
     extra_hosts:
       # this one is needed to connect to the host machine
       # from within the container
