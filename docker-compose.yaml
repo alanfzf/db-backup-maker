@@ -1,6 +1,6 @@
 services:
   maria-backup-maker:
-    image: db-backup-maker:latest
+    image: alanfzf/db-backup-maker:latest
     restart: unless-stopped
     env_file:
       - .env
