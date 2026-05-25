@@ -34,6 +34,12 @@ func CreateMySqlDump(cfg Config, file string) {
         "--events",
         "--triggers",
         "--all-databases",
+        // ignore system databases
+        "--ignore-database=information_schema",
+        "--ignore-database=mysql",
+        "--ignore-database=performance_schema",
+        "--ignore-database=sys",
+        // ignore system databases
         fmt.Sprintf("--result-file=%s", file),
         )
 
