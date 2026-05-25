@@ -33,9 +33,6 @@ func CreateMySqlDump(cfg Config, file string) {
         "--routines",
         "--events",
         "--triggers",
-        "--add-drop-database",
-        "--add-drop-table",
-        "--add-drop-trigger",
         "--all-databases",
         fmt.Sprintf("--result-file=%s", file),
         )
