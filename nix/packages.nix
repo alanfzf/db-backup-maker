@@ -34,6 +34,10 @@ in
       ];
     };
 
+    extraCommands = ''
+      mkdir -m 1777 tmp
+    '';
+
     config = {
       Cmd = [
         "${pkgs.supercronic}/bin/supercronic"
