@@ -1,0 +1,13 @@
+services:
+  maria-backup-maker:
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./config/crontab:/etc/crontabs/root:ro
+    extra_hosts:
+      # this one is needed to connect to the host machine
+      # from within the container
+      - "host.docker.internal:host-gateway"
