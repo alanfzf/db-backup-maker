@@ -4,14 +4,13 @@
   system,
 }:
 let
-
 in
 {
   app = pkgs.buildGoModule {
     pname = "db-backup-maker";
     version = "0.1.0";
     src = ../.;
-    vendorHash = null;
+    vendorHash = "sha256-QI3R5hQUL2K1WyzoqOX5gZArZcttkMfeY1qu6h15a5k=";
   };
 
   docker = pkgs.dockerTools.buildImage {
