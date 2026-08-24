@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -38,7 +39,7 @@ func UploadDumpToS3(cfg Config, file string) {
 
 	_, err = client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(cfg.AWSBucket),
-		Key:    aws.String(f.Name()),
+		Key:    aws.String(filepath.Base(file)),
 		Body:   f,
 	})
 
