@@ -28,7 +28,6 @@ in
         pkgs.dockerTools.caCertificates
         # actual app
         pkgs.supercronic
-        pkgs.awscli2
         pkgs.mariadb.client
         self.packages.${system}.app
       ];
