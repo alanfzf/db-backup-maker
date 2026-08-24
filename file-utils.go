@@ -1,53 +1,60 @@
 package main
 
 import (
-    "compress/gzip"
-    "time"
-    "os"
-    "io"
+	"compress/gzip"
+	"io"
+	"os"
+	"time"
 )
 
 func CompressFile(file string) string {
-    src, err := os.Open(file)
+	src, err := os.Open(file)
 
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    defer src.Close()
+	defer src.Close()
 
-    gzFile := file+".gz"
+	gzFile := file + ".gz"
 
-    // 1. create destination .gz file
-    dst, err := os.Create(gzFile)
-    if err != nil {
-        panic(err)
-    }
-    defer dst.Close()
+	// 1. create destination .gz file
+	dst, err := os.Create(gzFile)
+	if err != nil {
+		panic(err)
+	}
+	defer dst.Close()
 
-    // 2. create gzip writer
-    gz := gzip.NewWriter(dst)
-    defer gz.Close()
-    gz.Name = gzFile
+	// 2. create gzip writer
+	gz := gzip.NewWriter(dst)
+	defer gz.Close()
+	gz.Name = gzFile
 
-    // copy file contents into gzip writer
-    _, err = io.Copy(gz, src)
-    if err != nil {
-        panic(err)
-    }
+	// copy file contents into gzip writer
+	_, err = io.Copy(gz, src)
+	if err != nil {
+		panic(err)
+	}
+	return gzFile
+}
 
-    return gzFile
+func DeleteFile(file string) {
+	err := os.Remove(file)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func CreateTmpFile() string {
-    ts := time.Now().Format(time.RFC3339)
-    f, err := os.CreateTemp("", "dump_"+ts+"_*.sql")
+	ts := time.Now().Format(time.RFC3339)
+	f, err := os.CreateTemp("", "dump_"+ts+"_*.sql")
 
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    defer f.Close()
+	defer f.Close()
 
-    return f.Name()
+	return f.Name()
 }
