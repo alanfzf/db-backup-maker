@@ -4,6 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 env:
+  IMAGE_TAG: latest
   DOCKERHUB_REPOSITORY: alanfzf/db-backup-maker
 
 concurrency:
@@ -43,7 +44,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            ${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}-${{ matrix.arch }}
+            ${{ env.DOCKERHUB_REPOSITORY }}:${{ env.IMAGE_TAG }}-${{ matrix.arch }}
 
   manifest:
     needs: build
@@ -62,6 +63,6 @@ jobs:
       - name: Create multi-arch manifest
         run: |
           docker buildx imagetools create \
-            -t "${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}" \
-            "${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}-amd64" \
-            "${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}-arm64"
+            -t "${{ env.DOCKERHUB_REPOSITORY }}:${{ env.IMAGE_TAG }}" \
+            "${{ env.DOCKERHUB_REPOSITORY }}:${{ env.IMAGE_TAG }}-amd64" \
+            "${{ env.DOCKERHUB_REPOSITORY }}:${{ env.IMAGE_TAG }}-arm64"
