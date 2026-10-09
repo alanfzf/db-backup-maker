@@ -1,0 +1,67 @@
+name: Build and Push
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+env:
+  DOCKERHUB_REPOSITORY: alanfzf/db-backup-maker
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            arch: amd64
+          - platform: linux/arm64
+            arch: arm64
+
+    runs-on: ubuntu-latest
+    steps:
+      # checkout
+      - uses: actions/checkout@v7
+      # buildx
+      - uses: docker/setup-buildx-action@v4
+      # login to hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # build and push
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}-${{ matrix.arch }}
+
+  manifest:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # buildx
+      - uses: docker/setup-buildx-action@v4
+      # login to hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # multiarch
+      - name: Create multi-arch manifest
+        run: |
+          docker buildx imagetools create \
+            -t "${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}" \
+            "${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}-amd64" \
+            "${{ env.DOCKERHUB_REPOSITORY }}:${{ github.ref_name }}-arm64"
